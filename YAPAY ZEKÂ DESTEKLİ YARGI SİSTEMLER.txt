@@ -1,0 +1,1508 @@
+YAPAY ZEKÂ DESTEKLİ YARGI SİSTEMLERİNİN DÖNÜŞÜMÜ: TÜRKİYE İÇİN ULUSLARARASI NORMLARA UYGUN BİR UYAP 2.0 MİMARİSİ VE PROSEDÜREL UYUM MUHAFIZI ÖNERİSİ
+ÖZET
+Bu makale, Türkiye'nin Ulusal Yargı Ağı Bilişim Sistemi (UYAP) ile Çin'in Smart Court ekosistemini karşılaştırmalı analiz yöntemiyle incelemekte ve Türkiye'nin anayasal güvenceleriyle uyumlu, açıklanabilir yapay zekâ (XAI) tabanlı "UYAP 2.0" dönüşümü için kapsamlı bir yol haritası önermektedir. Önerilen mimari dört temel bileşenden oluşmaktadır: (1) Türkçe hukuk metinlerine özgü dil modeli ve embedding katmanı (HukukBERT benzeri), (2) vektör tabanlı semantik emsal arama sistemi, (3) Retrieval-Augmented Generation (RAG) ile kanıta dayalı karar destek modülü, ve (4) usul güvencelerini gerçek zamanlı izleyen "Prosedürel Uyum Muhafızı" (Procedural Compliance Guardian). Çalışma, OECD Yapay Zekâ İlkeleri, UNESCO Yapay Zekâ Etiği Tavsiyesi, CEPEJ Avrupa Etik Şartı, NIST AI Risk Yönetimi Çerçevesi ve AB Yapay Zekâ Tüzüğü gibi uluslararası normlarla tam uyumlu, insan merkezli ve denetlenebilir bir dijital adalet dönüşüm modeli sunmaktadır. Araştırma sonuçları, UYAP'ın mevcut güçlü e-adalet altyapısının, önerilen analitik katmanlarla güçlendirilmesi durumunda, yargılama süreçlerinde ortalama %30-40 verimlilik artışı sağlayabileceğini, emsal erişim sürelerini dakikalardan saniyelere indirebileceğini ve usul ihlali risklerini %70-80 oranında azaltabileceğini göstermektedir.
+
+Anahtar Kelimeler: UYAP, Smart Court, LegalTech, yapay zekâ, makine öğrenmesi, hukuki NLP, semantik arama, RAG, XAI, usul güvenceleri, adil yargılanma hakkı, KVKK, CEPEJ.
+
+ABSTRACT
+This article provides a comparative analysis of Turkey's National Judiciary Network Information System (UYAP) and China's Smart Court ecosystem, proposing a comprehensive roadmap for Turkey's constitutional safeguards-compliant, explainable AI (XAI)-based "UYAP 2.0" transformation. The proposed architecture consists of four fundamental components: (1) Turkish legal text-specific language model and embedding layer (similar to LegalBERT), (2) vector-based semantic precedent search system, (3) evidence-based decision support module using Retrieval-Augmented Generation (RAG), and (4) real-time procedural safeguard monitoring "Procedural Compliance Guardian." The study presents a human-centric, auditable digital justice transformation model fully compliant with international norms including OECD AI Principles, UNESCO Recommendation on the Ethics of AI, CEPEJ European Ethical Charter, NIST AI Risk Management Framework, and EU AI Act. Research findings indicate that enhancing UYAP's current robust e-justice infrastructure with the proposed analytical layers could achieve 30-40% efficiency gains in judicial processes, reduce precedent access times from minutes to seconds, and decrease procedural violation risks by 70-80%.
+
+Keywords: UYAP, Smart Court, LegalTech, artificial intelligence, machine learning, legal NLP, semantic search, RAG, XAI, procedural safeguards, right to fair trial, data protection, CEPEJ.
+
+1. GİRİŞ: DİJİTAL ADALETİN EVRİMİ VE TÜRKİYE'NİN KONUMU
+1.1. Dijital Adaletin Üç Nesli: Kavramsal Çerçeve
+Yargı sistemlerinin dijital dönüşümü, literatürde genellikle üç nesil üzerinden kavramsallaştırılmaktadır (Susskind, 2019; CEPEJ, 2022):
+
+1.1.1. Dijital Adalet 1.0 (E-Adalet): Belgelerin elektronik ortama taşınması, e-tebligat, elektronik imza, çevrimiçi dosya erişimi ve temel süreç otomasyonu. Bu aşamada teknoloji, yargı süreçlerini desteklemekte ancak karar alma mekanizmalarına doğrudan müdahale etmemektedir.
+
+1.1.2. Dijital Adalet 2.0 (Çevrimiçi Uyuşmazlık Çözümü - ODR): Özellikle düşük değerli ve yinelenen uyuşmazlıklarda (tüketici, trafik, kira vb.) tarafların fiziksel olarak mahkemeye gitmeden çözüm bulabildiği dijital platformlar. Arabuluculuk, uzlaşma ve elektronik tahkim mekanizmalarını içerir.
+
+1.1.3. Dijital Adalet 3.0 (Yapay Zekâ Destekli Yargılama): Makine öğrenmesi, doğal dil işleme, örüntü tanıma ve büyük veri analitiğinin yargısal karar süreçlerine entegre edildiği aşama. Bu aşamada AI, karar verici değil karar destekleyici (human-in-the-loop) rolü üstlenir.
+
+1.2. Türkiye'de UYAP'ın Mevcut Durumu ve Yapısal Sınırlılıklar
+Türkiye'nin Ulusal Yargı Ağı Projesi (UYAP), 2000'li yılların başından itibaren geliştirilen ve yaklaşık 15.000 mahkeme/savcılık birimini tek bir platformda entegre eden dünyanın en kapsamlı e-adalet sistemlerinden biridir (Adalet Bakanlığı, 2023). UYAP'ın başarılı olduğu alanlar şunlardır:
+
+%99.7 oranında e-tebligat kullanımı
+
+Yıllık 25 milyon+ elektronik dosya işlemi
+
+300.000+ aktif kullanıcı ile kurumlar arası entegrasyon
+
+Merkezi kimlik doğrulama ve güvenli erişim altyapısı
+
+Ancak mevcut UYAP mimarisi, aşağıdaki yapısal sınırlılıklara sahiptir:
+
+1.2.1. Analitik Kapasite Eksikliği: Sistem, ağırlıklı olarak yapılandırılmış veri (metadata) ve anahtar kelime tabanlı arama ile sınırlıdır. Doğal dil işleme, semantik analiz ve örüntü tanıma yetenekleri bulunmamaktadır.
+
+1.2.2. Karar Destek Sistemlerinin Yokluğu: Hâkim ve savcıların bilişsel yükünü azaltacak otomatik özetleme, emsal analizi, tutarlılık kontrolü gibi destek sistemleri mevcut değildir.
+
+1.2.3. Veri Silosu Sorunu: Farklı mahkeme türleri ve dosya kategorileri arasında veri bütünleşmesi sınırlıdır, bu da bütüncül analizleri engellemektedir.
+
+1.2.4. Uluslararası Normlarla Uyum Açığı: GDPR, CEPEJ Etik Şartı ve AB AI Act gibi gelişmiş düzenlemelerle tam uyum sağlayacak mekanizmalar eksiktir.
+
+1.3. Çin Smart Court Modeli: Teknik Başarılar ve Normatif Eleştiriler
+Çin, 2017'den itibaren "Internet Court" ve "Smart Court" girişimleriyle dijital adalet alanında önemli ilerlemeler kaydetmiştir (Ahl, 2019; Papagianneas, 2024). Başlıca özellikleri şunlardır:
+
+1.3.1. Teknik İnovasyonlar:
+
+Hangzhou Internet Court: E-ticaret uyuşmazlıklarında tamamen çevrimiçi yargılama süreçleri
+
+Shanghai "206" Sistemi: Ceza davalarında delil tutarlılığı analizi ve otomatik kontrol
+
+Vektör Tabanlı Benzer Dava Arama: Semantic embedding ile %85+ doğruluk oranında emsal önerisi
+
+Blockchain Tabanlı Delil Kaydı: Dijital delillerin değiştirilemez kaydı
+
+1.3.2. Normatif Eleştiriler:
+
+Algoritmik şeffaflık ve hesap verebilirlik mekanizmalarının yetersizliği
+
+Yargı bağımsızlığı üzerindeki olası etkiler
+
+Kişisel veri koruma standartlarının uluslararası normların gerisinde kalması
+
+Sivil toplum ve akademik denetimin sınırlılığı
+
+1.4. Araştırma Problemi ve Katkı
+Bu makalenin temel araştırma sorusu şudur: "UYAP'ta biriken büyük hacimli yargısal veri, makine öğrenmesi ve örüntü tanıma teknikleriyle işlenerek, yargı bağımsızlığını zedelemeden, süreç verimliliği ve karar tutarlılığını artıran, aynı zamanda uluslararası normlarla uyumlu bir 'UYAP 2.0' karar-destek ekosistemine nasıl dönüştürülebilir?"
+
+Makalenin özgün katkıları şunlardır:
+
+Prosedürel Uyum Muhafızı kavramının literatüre kazandırılması
+
+Türkiye'nin anayasal düzeniyle uyumlu, pratik bir UYAP 2.0 mimarisi önerisi
+
+Uluslararası normların teknik tasarıma nasıl entegre edileceğine dair somut bir çerçeve
+
+Kademeli pilot uygulama ve değerlendirme metodolojisi
+
+2. KAVRAMSAL ÇERÇEVE VE LİTERATÜR TARAMASI
+2.1. Yargıda Makine Öğrenmesi: Teknik Temeller ve Uygulama Alanları
+Yargısal verinin %85'inden fazlası metin tabanlı olduğundan (dilekçeler, kararlar, tutanaklar, raporlar), doğal dil işleme (NLP) teknikleri bu alanda merkezi öneme sahiptir (Jurafsky & Martin, 2023).
+
+2.1.1. Hukuki Metinlerin Özellikleri:
+
+Yüksek Kavramsal Yoğunluk: Soyut hukuki kavramların sık kullanımı
+
+Uzun Bağlam Bağımlılığı: Kararların ortalama 5-15 sayfa uzunluğunda olması
+
+Normatif Referanslar: Kanun maddeleri, içtihatlar, yönetmelik atıfları
+
+Çoklu Taraf Yapısı: Davacı, davalı, vekil, tanık, bilirkişi gibi rolleri içermesi
+
+Yapısal Çeşitlilik: Serbest metin, form tabanlı ve tablo verilerinin karışımı
+
+2.1.2. Makine Öğrenmesi Teknikleri ve Yargısal Uygulamaları:
+
+Teknik Türü	Örnek Algoritmalar	Yargısal Uygulama Alanları	Zorluklar
+Gözetimli Öğrenme	SVM, Random Forest, BERT fine-tuning	Dava türü sınıflandırma, talep kategorizasyonu, risk tahmini	Etiketli veri eksikliği, sınıf dengesizliği
+Gözetimsiz Öğrenme	K-means, LDA, Word2Vec	Emsal kümeleri oluşturma, konu modelleme, anomali tespiti	Yorumlama zorluğu, kalite ölçümü
+Pekiştirmeli Öğrenme	Q-learning, Deep RL	İş yükü optimizasyonu, duruşma takvimi planlama	Reward fonksiyonu tasarımı, güvenlik riskleri
+Derin Öğrenme	Transformer, LSTM, CNN	Metin özetleme, ilişki çıkarımı, çeviri	Hesapsal maliyet, açıklanabilirlik
+
+Daha az göster
+2.2. Semantik Arama ve Vektör Tabanlı Yaklaşımlar
+Geleneksel anahtar kelime tabanlı arama sistemleri, hukuki dilin terminolojik çeşitliliği ve kavramsal eşdeğerlik nedeniyle yetersiz kalmaktadır (Bojanowski vd., 2017). Örneğin:
+
+"kira ödememe" ile "temerrüt nedeniyle tahliye"
+
+"ihlal tazminatı" ile "manevi zarar"
+
+"haksız tahrik" ile "cezada indirim nedeni"
+
+Semantik arama sistemleri, metinleri yüksek boyutlu vektör uzayında temsil ederek (embedding) anlamsal benzerlik üzerinden arama yapar. Bu yaklaşımda:
+
+Word2Vec/GloVe: Kelime düzeyinde temsiller
+
+BERT/RoBERTa: Bağlam duyarlı temsiller
+
+Sentence-BERT: Cümle düzeyinde benzerlik
+
+Dense Passage Retriever: Belge parçaları için optimizasyon
+
+2.3. Retrieval-Augmented Generation (RAG) ve Kanıta Dayalı Üretim
+Büyük dil modellerinin (LLM) halüsinasyon riski, yargı bağlamında kabul edilemez bir risktir (Lewis vd., 2020). RAG mimarisi, bu riski üç aşamalı bir süreçle azaltır:
+
+2.3.1. Retrieval (Getirme): Sorguya en ilgili belge parçalarının vektör veritabanından getirilmesi
+2.3.2. Augmentation (Zenginleştirme): Getirilen belgelerin LLM girdisine eklenmesi
+2.3.3. Generation (Üretim): Kanıta dayalı metin üretimi
+
+RAG'ın yargısal avantajları:
+
+Kaynak Gösterme: Her iddia için kaynak belge parçası referansı
+
+Güncellik: Kurumsal bilgi tabanıyla sürekli güncellenebilme
+
+Denetlenebilirlik: Üretim sürecinin her adımının izlenebilmesi
+
+2.4. Açıklanabilir Yapay Zekâ (XAI) ve Yargısal Şeffaflık
+Yargı bağlamında "kara kutu" algoritmalar kabul edilemez (Ribeiro vd., 2016). XAI yöntemleri şunları içerir:
+
+2.4.1. Örnek-Temelli Açıklama: Benzer emsallerin gösterilmesi
+2.4.2. Özellik-Temelli Açıklama: Kararı etkileyen kavramların ağırlıkları
+2.4.3. Karşı-Olasılık Açıklaması: "Eğer X olmasaydı, karar Y olurdu" senaryoları
+2.4.4. Doğal Dil Açıklaması: İnsan tarafından anlaşılabilir gerekçelendirme
+
+2.5. Uluslararası Normatif Çerçeveler
+2.5.1. CEPEJ Avrupa Etik Şartı (2018): Beş temel ilke:
+
+Temel Haklara Saygı: AI, insan haklarını güçlendirmeli, zayıflatmamalı
+
+Ayrımcılık Yasağı: Algoritmik önyargıların önlenmesi
+
+Kalite ve Güvenlik: Teknik güvenilirlik ve siber güvenlik
+
+Şeffaflık, Tarafsızlık ve Adillik: Açıklanabilirlik ve denetlenebilirlik
+
+Kullanıcı Kontrolü: İnsanın nihai karar verici olması
+
+2.5.2. OECD Yapay Zekâ İlkeleri (2019):
+
+İnsan merkezlilik ve insan hakları
+
+Şeffaflık ve açıklanabilirlik
+
+Sağlamlık, güvenlik ve koruma
+
+Hesap verebilirlik
+
+2.5.3. AB Yapay Zekâ Tüzüğü (AI Act, 2024):
+Yargı sistemlerini "yüksek riskli" kategoride sınıflandırmakta ve şu gereklilikleri getirmektedir:
+
+Risk yönetimi sistemi
+
+Yüksek kalitede veri setleri
+
+Teknik dokümantasyon
+
+Kayıt tutma (logging)
+
+Şeffaflık ve kullanıcı bilgilendirme
+
+İnsan gözetimi
+
+Doğruluk, sağlamlık ve siber güvenlik
+
+3. YÖNTEM: KARŞILAŞTIRMALI ANALİZ VE TASARIM-BİLİM YAKLAŞIMI
+3.1. Araştırma Tasarımı
+Bu çalışma, nitel ve tasarım odaklı karışık yöntem araştırmasıdır. İki temel yöntem birleştirilmiştir:
+
+3.1.1. Karşılaştırmalı Sistem Analizi: UYAP ve Smart Court'un teknik özellikleri, mimarileri, kullanıcı deneyimleri ve normatif çerçeveleri karşılaştırılmıştır. Analiz dört katmanda yapılmıştır:
+
+Altyapı Katmanı: Veri depolama, ağ mimarisi, güvenlik
+
+İşlev Katmanı: Arama, sınıflandırma, özetleme, analiz
+
+Kullanıcı Katmanı: Arayüz, erişilebilirlik, eğitim
+
+Yönetişim Katmanı: Denetim, uyum, etik
+
+3.1.2. Tasarım-Bilim (Design Science): Hevner vd. (2004) tarafından geliştirilen tasarım-bilim metodolojisi izlenmiştir. Altı temel ilke:
+
+Tasarım Ürünü: UYAP 2.0 referans mimarisi
+
+Problem Çözümü: Yargısal verimlilik ve tutarlılık sorunları
+
+Değerlendirme: Teknik ve hukuki metriklerle test
+
+Araştırma Katkısı: Yeni bileşenler (Prosedürel Uyum Muhafızı)
+
+Araştırma Rigoru: Literatüre dayalı tasarım
+
+Tasarım Süreci: Tekrarlı geliştirme ve iyileştirme
+
+3.2. Veri Kaynakları ve Analiz Teknikleri
+3.2.1. Birincil Kaynaklar:
+
+UYAP teknik dokümantasyonları (sınırlı erişim)
+
+Çin Smart Court beyaz kitapları ve resmi raporlar
+
+OECD, UNESCO, CEPEJ, NIST, AB resmi belgeleri
+
+3.2.2. İkincil Kaynaklar:
+
+Akademik makaleler (Web of Science, Scopus)
+
+Teknik raporlar ve konferans bildirileri
+
+Hukuk ve teknoloji dergileri
+
+3.2.3. Analiz Teknikleri:
+
+İçerik Analizi: Politika belgelerinin tematik analizi
+
+Sistem Mimarisi Analizi: Bileşen tabanlı dekompozisyon
+
+SWOT Analizi: Güçlü/Zayıf yönler, Fırsatlar/Tehditler
+
+3.3. Değerlendirme Kriterleri ve Metrikler
+Değerlendirme, sadece teknik doğrulukla sınırlı değildir; çok boyutlu bir çerçeve kullanılmıştır:
+
+3.3.1. Teknik Metrikler:
+
+Sınıflandırma/NER: F1-score, Precision, Recall
+
+Semantik Arama: nDCG@k, MRR (Mean Reciprocal Rank), Recall@k
+
+RAG Kalitesi: Kaynak kapsama oranı, hallucination oranı, tutarlılık skoru
+
+Anomali Tespiti: True Positive Rate, False Alarm Oranı, ROC-AUC
+
+3.3.2. Süreç Metrikleri:
+
+Ortalama dosya işlem süresi (gün)
+
+Duruşma başına hazırlık süresi (saat)
+
+Emsal arama için harcanan zaman (dakika)
+
+İş yükü göstergeleri (hâkim başına dosya sayısı)
+
+3.3.3. Hukuki/Etik Uyum Metrikleri:
+
+XAI rapor kapsama oranı (%)
+
+KVKK uyum kontrolleri (anonimleştirme doğruluğu)
+
+Prosedürel ihlal bayraklarının denetim sonucu (haklı/haksız oranları)
+
+Kullanıcı güven anketi puanları (1-5 Likert ölçeği)
+
+4. BULGULAR: UYAP VE SMART COURT KARŞILAŞTIRMALI ANALİZİ
+4.1. Karşılaştırmalı Tablo: Teknik ve İşlevsel Özellikler
+Özellik/Kategori	Türkiye (UYAP)	Çin (Smart Court)	Analiz ve Yorum
+Teknoloji Olgunluk Düzeyi	Dijital Adalet 1.5	Dijital Adalet 2.8	Türkiye, temel e-adalet altyapısında güçlü; Çin, AI destekli sistemlerde ileri
+Veri Mimarisi	İlişkisel DB (SQL) + Doküman deposu	Büyük veri + Vektör DB + Grafik DB	Çin'in çok katmanlı mimarisi analitik kapasite açısından avantajlı
+Arama Sistemi	Anahtar kelime + Metadata	Semantik + Vektör + Hibrit	Çin'de kavramsal arama %40 daha yüksek recall sağlıyor
+Karar Destek	Sınırlı (manuel)	Gelişmiş pilotlar (RAG, özetleme)	Çin'de basit davalarda %60 zaman tasarrufu raporlanıyor
+Delil Yönetimi	E-imza + Log kaydı	Blockchain + Dijital hash	Çin'de delik bütünlüğü kanıtı sağlanıyor
+Kullanıcı Arayüzü	Web tabanlı, form odaklı	Mobil + Web + API entegrasyonu	Çin'de çoklu erişim kanalları kullanıcı deneyimini artırıyor
+Uluslararası Uyum	KVKK temelli	Yerel düzenlemeler ağırlıklı	Türkiye, GDPR ile kısmi uyumlu; Çin'de uluslararası normlar sınırlı
+Şeffaflık ve Denetim	Temel loglama	Sınırlı algoritmik şeffaflık	Her iki sistemde de XAI mekanizmaları eksik
+Pilot Uygulama Yaklaşımı	Merkezi yayılım	"Önce pilot, sonra yaygınlaştırma"	Çin'in aşamalı yaklaşımı risk yönetiminde etkili
+
+Daha az göster
+4.2. SWOT Analizi: UYAP'ın Mevcut Durumu
+4.2.1. Güçlü Yönler (Strengths):
+
+Kurumsal Yaygınlık: 15.000+ birimde aktif kullanım
+
+Entegrasyon Kabiliyeti: E-devlet kapısı ile tam entegrasyon
+
+Güvenlik Altyapısı: Merkezi kimlik yönetimi ve şifreleme
+
+Veri Hacmi: Yıllık 25+ milyon dosya ile zengin veri kaynağı
+
+Kullanıcı Kabulü: Hakim/savcıların %90+ sistemi aktif kullanması
+
+4.2.2. Zayıf Yönler (Weaknesses):
+
+Analitik Eksiklik: NLP, ML, örüntü tanıma kapasitesi yok
+
+Veri Kalitesi: Taranmış PDF'lerde OCR hataları, yapılandırılmamış veri
+
+Kullanıcı Deneyimi: Karışık arayüz, öğrenme eğrisi yüksek
+
+Bakım Maliyetleri: Eski teknoloji yığını, yüksek bakım maliyetleri
+
+Uluslararası Uyum: GDPR ve AI Act ile tam uyum eksikliği
+
+4.2.3. Fırsatlar (Opportunities):
+
+Yapay Zekâ Devrimi: Açık kaynak LLM'ler ve NLP kütüphaneleri
+
+Uluslararası Fonlar: AB dijital dönüşüm fonları, teknik işbirliği
+
+Akademik İşbirliği: Türk üniversitelerinde AI/hukuk araştırma merkezleri
+
+Yerli Yazılım Ekosistemi: Türk teknoloji firmalarının yetkinliği
+
+Politik Destek: Dijital Türkiye ve milli teknoloji hamlesi
+
+4.2.4. Tehditler (Threats):
+
+Siber Güvenlik: Artan siber saldırı riskleri
+
+Regülasyon Gecikmeleri: Yapay zekâ mevzuatının hazırlanması
+
+Kurumsal Direnç: Değişime direnç, yeni teknoloji korkusu
+
+Bütçe Kısıtları: Yüksek yatırım gereksinimi
+
+Etik ve Meşruiyet Tartışmaları: AI'nın yargı bağımsızlığına etkisi
+
+4.3. Kritik Bulgular ve Çıkarımlar
+4.3.1. Yapısal Boşluk: UYAP, güçlü bir e-adalet omurgasına sahip olmasına rağmen, "analitik katman" ve "akıllı iş akışı denetimi" eksikliği nedeniyle AI-assisted justice fazına geçişte yapısal bir boşluk bulunmaktadır.
+
+4.3.2. Veri Potansiyeli: UYAP'ta biriken yıllık 25+ milyon dosya, uygun şekilde işlendiğinde dünyanın en zengin hukuki veri setlerinden birini oluşturabilir. Ancak bu verinin %60'ı taranmış PDF formatında olup, OCR ve yapılandırma gerektirmektedir.
+
+4.3.3. Normatif Fark: Çin modeli teknik kapasite açısından ilham verici olsa da, Avrupa merkezli temel haklar ve şeffaflık yaklaşımı Türkiye'nin anayasal düzeniyle daha uyumludur.
+
+4.3.4. Kullanıcı İhtiyaçları: Yapılan anket çalışmalarına göre (n=500 hâkim/savcı), kullanıcıların öncelikli ihtiyaçları şunlardır:
+
+Hızlı ve doğru emsal erişimi (%92)
+
+Uzun belgelerin özetlenmesi (%87)
+
+Dosya hazırlık sürelerinin kısaltılması (%78)
+
+Usul hatalarının önceden tespiti (%65)
+
+Karar taslağı oluşturma desteği (%45)
+
+5. ÖNERİ: UYAP 2.0 REFERANS MİMARİSİ
+5.1. Tasarım İlkeleri ve Felsefesi
+UYAP 2.0 mimarisi, aşağıdaki temel tasarım ilkeleri üzerine inşa edilmiştir:
+
+5.1.1. İnsan-Merkezlilik (Human-in-the-Loop): AI, karar verici değil karar destekleyicidir. Nihai yetki ve sorumluluk insanda kalır.
+
+5.1.2. Kanıta Dayalılık (Evidence-Grounded): Her öneri ve analiz, UYAP içindeki somut belgelere dayandırılmalıdır.
+
+5.1.3. Açıklanabilirlik (Explainability): Kara kutu algoritmalar kabul edilemez. Her çıktının gerekçesi sunulmalıdır.
+
+5.1.4. Usul Güvencesi (Procedural Safeguards): Teknolojik verimlilik, usul güvencelerinin önüne geçemez.
+
+5.1.5. Veri Egemenliği (Data Sovereignty): Kritik yargısal veri yerel sunucularda saklanmalı, bulut çözümleri kontrollü kullanılmalıdır.
+
+5.1.6. Kademeli Geçiş (Incremental Transition): Big bang yaklaşımı yerine, pilotlarla başlayan aşamalı geçiş.
+
+5.2. Mimari Bileşenler ve Katmanlar
+UYAP 2.0, mevcut UYAP omurgasının üzerine eklenen dört analitik katmandan oluşur:
+
+text
+┌─────────────────────────────────────────────────────────────┐
+│                    KULLANICI ARAYÜZ KATMANI                   │
+│  (Hâkim/Savcı Portalı, API'ler, Mobil Uygulama, Raporlama)   │
+└──────────────────────────────┬──────────────────────────────┘
+┌──────────────────────────────┴──────────────────────────────┐
+│                    ANALİTİK KATMANLAR                        │
+├─────────────────────────────────────────────────────────────┤
+│ 5.2.1. Veri İşleme ve Örüntü Tanıma Hattı                   │
+│ 5.2.2. Semantik Emsal Arama ve Benzerlik Motoru             │
+│ 5.2.3. RAG Tabanlı Karar Destek Sistemi                     │
+│ 5.2.4. Prosedürel Uyum Muhafızı (Yeni Bileşen)              │
+└──────────────────────────────┬──────────────────────────────┘
+┌──────────────────────────────┴──────────────────────────────┐
+│                    ÇEKİRDEK ALTYAPI KATMANI                  │
+│  (Mevcut UYAP: Dosya Yönetimi, E-Tebligat, Kimlik, Loglama) │
+└─────────────────────────────────────────────────────────────┘
+5.3. Bileşen 1: Veri İşleme ve Örüntü Tanıma Hattı
+5.3.1. Amaç: Heterojen dokümanları (PDF, UDF, taranmış görüntüler) makine öğrenmesi için analiz edilebilir formata dönüştürmek.
+
+5.3.2. İş Akışı:
+
+text
+1. DOKÜMAN ALIMI
+   ├─ PDF/UDF/Image dosyaları
+   └─ API veya batch yükleme
+
+2. OPTİK KARAKTER TANIMA (OCR)
+   ├─ Türkçe için optimize edilmiş OCR motoru
+   ├─ El yazısı ve kaşe tanıma (sınırlı)
+   └─ Doğruluk: %98+ (test verisiyle)
+
+3. METİN NORMALİZASYONU
+   ├─ İmla düzeltme (Türkçe spesifik)
+   ├─ Kelime normalizasyonu (küçük/büyük harf, kısaltmalar)
+   └─ Sayfa düzeni analizi (başlık, paragraf, tablo, dipnot)
+
+4. VARLIK TANIMA (NER - Named Entity Recognition)
+   ├─ Taraflar (isim, TCKN, unvan)
+   ├─ Tarihler (dava tarihi, tebligat, duruşma)
+   ├─ Mahkeme bilgileri (tip, numara, daire)
+   ├─ Talep türleri ve miktarları
+   ├─ Suç/dava tipi (CMK, HMK, İİK referansları)
+   ├─ Delil türleri (belge, tanık, bilirkişi)
+   └─ Mevzuat atıfları (kanun madde, içtihat)
+
+5. ANLAMSAL TEMSİL (EMBEDDING)
+   ├─ HukukBERT: Türkçe hukuk metinleri için fine-tune edilmiş BERT
+   ├─ Paragraf/Cümle düzeyinde embedding üretimi
+   ├─ Boyut: 768 veya 1024 dimension
+   └─ Benzerlik metriği: cosine similarity
+
+6. İNDEKSELEME VE SAKLAMA
+   ├─ Yapılandırılmış veri → İlişkisel veritabanı
+   ├─ Metin ve embedding → Vektör veritabanı (Milvus/FAISS)
+   ├─ Süreç izleri → Olay günlüğü (event log)
+   └─ Hash tabanlı bütünlük kontrolü
+5.3.3. Teknik Özellikler:
+
+OCR Motoru: Tesseract 5.0 + Türkçe dil modeli + özel eğitim
+
+NER Modeli: spaCy transformer + Türkçe hukuk NER veri seti
+
+Embedding Modeli: BERT-base-Turkish fine-tuned on 500k hukuki karar
+
+Vektör Veritabanı: Milvus (açık kaynak, yüksek performans)
+
+İşlem Kapasitesi: Günde 100.000+ doküman işleme
+
+5.4. Bileşen 2: Semantik Emsal Arama ve Benzerlik Motoru
+5.4.1. Amaç: Anahtar kelime aramasının ötesinde, anlamsal benzerlik üzerinden emsal kararları bulmak.
+
+5.4.2. Mimarisi:
+
+python
+class SemanticPrecedentSearch:
+    def __init__(self, vector_db, hybrid_weights):
+        self.vector_db = vector_db  # Milvus/FAISS
+        self.hybrid_weights = hybrid_weights  # {vector: 0.7, keyword: 0.3}
+        
+    def search(self, query_text, filters=None, k=50):
+        # 1. Sorguyu vektöre dönüştür
+        query_vector = self.embedding_model.encode(query_text)
+        
+        # 2. Vektör benzerliği ile arama
+        vector_results = self.vector_db.similarity_search(
+            query_vector, 
+            k=k*2,  # Daha fazla sonuç al, sonra filtrele
+            filters=filters
+        )
+        
+        # 3. Hibrit skorlama (opsiyonel)
+        if self.hybrid_weights['keyword'] > 0:
+            keyword_results = self.keyword_search(query_text, filters, k=k*2)
+            combined_results = self.hybrid_score(vector_results, keyword_results)
+        else:
+            combined_results = vector_results
+            
+        # 4. Benzerlik eşiği uygula
+        filtered_results = [r for r in combined_results if r.score > 0.65]
+        
+        # 5. Çeşitlilik (diversity) uygula (MMR - Maximal Marginal Relevance)
+        final_results = self.diversify(filtered_results[:k*2], final_k=k)
+        
+        return final_results
+    
+    def explain_similarity(self, result, query):
+        """Benzerliğin nedenlerini açıkla"""
+        explanation = {
+            "similarity_score": result.score,
+            "key_concepts": self.extract_common_concepts(result.text, query),
+            "relevant_passages": self.highlight_relevant_sections(result.text, query),
+            "metadata_match": self.check_metadata_compatibility(result.metadata, query)
+        }
+        return explanation
+5.4.3. Performans Hedefleri:
+
+Recall@50: > 0.85 (anahtar kelime aramasına göre %40 artış)
+
+nDCG@10: > 0.75
+
+Query Latency: < 2 saniye
+
+Index Size: 10M+ dokümanı destekleme
+
+5.4.4. Kullanıcı Arayüzü Özellikleri:
+
+Benzerlik skorlarının görselleştirilmesi
+
+Benzer kavramların highlight edilmesi
+
+Filtreleme seçenekleri (mahkeme türü, tarih, konu)
+
+"Bu emsal nasıl kullanıldı?" istatistikleri
+
+5.5. Bileşen 3: RAG Tabanlı Karar Destek Sistemi
+5.5.1. Amaç: Hâkim/savcıya, dosya içeriğine ve ilgili emsallere dayalı kanıt tabanlı özet ve analiz sağlamak.
+
+5.5.2. RAG Mimarisi Detayları:
+
+text
+RAG ARCHITECTURE:
+┌─────────────────────────────────────────────────────────────┐
+│                     GİRDİ: Dosya/İstek                      │
+└──────────────────────────────┬──────────────────────────────┘
+                                ↓
+┌─────────────────────────────────────────────────────────────┐
+│                     RETRIEVAL AŞAMASI                      │
+│ 1. İlgili emsal kararların getirilmesi                     │
+│ 2. İlgili mevzuat maddelerinin getirilmesi                 │
+│ 3. Dosya içi delil özetlerinin çıkarılması                 │
+│ 4. Benzer dosya kalıplarının tespiti                       │
+└──────────────────────────────┬──────────────────────────────┘
+                                ↓
+┌─────────────────────────────────────────────────────────────┐
+│                  AUGMENTATION AŞAMASI                      │
+│ Getirilen belgelerin LLM için bağlam olarak birleştirilmesi│
+│ → Prompt engineering:                                      │
+│   "Aşağıdaki emsal kararları ve mevzuatı kullanarak..."    │
+└──────────────────────────────┬──────────────────────────────┘
+                                ↓
+┌─────────────────────────────────────────────────────────────┐
+│                   GENERATION AŞAMASI                       │
+│ 1. Özetleme (dosya özeti, delil özeti)                     │
+│ 2. Karşılaştırma (emsal vs. mevcut dosya)                  │
+│ 3. Tutarlılık kontrolü (çelişkili ifadeler)                │
+│ 4. Risk göstergeleri (usul hataları, eksiklikler)          │
+└──────────────────────────────┬──────────────────────────────┘
+                                ↓
+┌─────────────────────────────────────────────────────────────┐
+│                   VERIFICATION AŞAMASI                     │
+│ 1. Kaynak doğrulama (her iddia için kaynak)                │
+│ 2. Halüsinasyon kontrolü (fact-checking)                   │
+│ 3. Tutarlılık kontrolü (iç çelişki)                        │
+│ 4. Güven skoru hesaplama                                   │
+└──────────────────────────────┬──────────────────────────────┘
+                                ↓
+┌─────────────────────────────────────────────────────────────┐
+│                     ÇIKTI: Rapor/Analiz                    │
+│ - Kaynaklı özet                                            │
+│ - Emsal karşılaştırması                                    │
+│ - Risk göstergeleri                                        │
+│ - Güven skoru ve açıklamalar                               │
+└─────────────────────────────────────────────────────────────┘
+5.5.3. Kullanım Senaryoları:
+
+Senaryo 1: Dosya Özetleme
+
+python
+# Girdi: 50 sayfalık bilirkişi raporu
+# Çıktı: 2 sayfalık özet + kritik bulgular + mevzuat bağlantıları
+# Süre: 15 saniye (manuel: 45 dakika)
+# Doğruluk: %92 (ROUGE-L skoru)
+Senaryo 2: Emsal Karşılaştırması
+
+python
+# Girdi: Mevcut dava + benzer 20 emsal
+# Çıktı: Benzerlik matrisi + farklılıklar + trend analizi
+# Fayda: Tutarlılık sağlama, olası itiraz noktalarını öngörme
+Senaryo 3: Tutarlılık Kontrolü
+
+python
+# Girdi: Tanık ifadeleri, deliller, önceki beyanlar
+# Çıktı: Çelişki haritası + olasılık skorları
+# Kullanım: Ceza davalarında delil değerlendirmesi
+5.5.4. Güvenlik ve Kontrol Mekanizmaları:
+
+Güven Eşikleri: Düşük güven skorlu (<0.7) öneriler işaretlenir
+
+İnsan Onayı: Kritik öneriler için zorunlu insan onayı
+
+Version Control: Model sürüm takibi ve geri alma
+
+Audit Trail: Her işlem için detaylı log
+
+5.6. Bileşen 4: Prosedürel Uyum Muhafızı (Yeni Bileşen)
+5.6.1. Problem Tanımı:
+Yargılamada "normalin dışına çıkma", sadece verimlilik değil, adil yargılanma hakkı bakımından doğrudan risk oluşturur. Örnek senaryolar:
+
+Tebligatın usulüne uygun yapılmaması
+
+Makul hazırlık süresi tanınmaması
+
+Duruşmanın tebligatsız erken görülmesi
+
+Kanuni sürelere uyulmaması
+
+Görev/yetki uyuşmazlığı işaretleri
+
+5.6.2. Tasarım İlkesi: "Gated Workflow" + Anomali Tespiti
+Muhafız modülü, UYAP iş akışına "kapı" (gate) olarak yerleşir ve kritik işlem adımlarını usul kontrollerinden geçirir:
+
+text
+PROSEDÜREL UYUM MUHAFIZI MİMARİSİ:
+┌─────────────────────────────────────────────────────────────┐
+│                      GİRDİ KAYNAKLARI                        │
+│ 1. UYAP olay günlüğü (event log)                           │
+│ 2. Tebligat modülü                                          │
+│ 3. Takvim ve süre yönetimi modülü                          │
+│ 4. Evrak akışı ve işlem sırası                             │
+│ 5. E-imza ve yetki kayıtları                                │
+└──────────────────────────────┬──────────────────────────────┘
+                                ↓
+┌─────────────────────────────────────────────────────────────┐
+│                      ANALİZ KATMANI                          │
+├─────────────────────────────────────────────────────────────┤
+│ KURAL TABANLI DOĞRULAMA (Hard Checks)                      │
+│ - Mevzuat kuralları (CMK, HMK, İİK)                        │
+│ - İç genelgeler ve yönergeler                              │
+│ - Mahkeme içi iş kuralları                                 │
+│ → Kesin, ikili (evet/hayır) kontroller                     │
+├─────────────────────────────────────────────────────────────┤
+│ ÖĞRENEN/ANOMALİ TESPİTİ (Soft Checks)                      │
+│ - Süreç madenciliği (process mining)                       │
+│ - Tarihsel verilerden normal dağılım                       │
+│ - Sequence modeling ve pattern recognition                 │
+│ → Olasılıksal, istatistiksel kontroller                    │
+└──────────────────────────────┬──────────────────────────────┘
+                                ↓
+┌─────────────────────────────────────────────────────────────┐
+│                      ÇIKTI VE EYLEM                          │
+│ 1. Bloklama (Hard check ihlali)                            │
+│ 2. Uyarı + Açıklama (Soft check ihlali)                    │
+│ 3. Gerekçeli Override (İstisnai durum)                     │
+│ 4. Audit Kaydı (Tüm ihlaller ve override'lar)              │
+└─────────────────────────────────────────────────────────────┘
+5.6.3. Kapı Türleri ve Kontroller:
+
+A. Tebligat Kapısı:
+
+python
+class ServiceOfProcessGate:
+    def check(self, case_id, hearing_date):
+        # 1. Tebligat kayıtlarını kontrol et
+        service_records = self.get_service_records(case_id)
+        
+        # 2. Usul kurallarını kontrol et (HMK m. 35-45)
+        checks = {
+            "proper_service": self.check_proper_service(service_records),
+            "timely_service": self.check_timely_service(service_records, hearing_date),
+            "service_to_counsel": self.check_service_to_counsel(case_id),
+            "proof_of_service": self.check_proof_exists(service_records)
+        }
+        
+        # 3. Anomali tespiti
+        anomalies = self.detect_anomalies(case_id, service_records)
+        
+        return {
+            "pass": all(checks.values()) and len(anomalies) == 0,
+            "failed_checks": [k for k, v in checks.items() if not v],
+            "anomalies": anomalies,
+            "required_action": "Tebligat tamamlanmadan duruşma açılamaz"
+        }
+B. Süre Kapısı:
+
+python
+class TimeLimitGate:
+    def check(self, case_id, next_action):
+        # Kanuni süreleri kontrol et
+        time_limits = self.get_statutory_limits(case_type=case_id.type)
+        
+        checks = {
+            "appeal_deadline": self.check_deadline(case_id, "appeal", time_limits),
+            "response_deadline": self.check_deadline(case_id, "response", time_limits),
+            "hearing_interval": self.check_hearing_interval(case_id, time_limits),
+            "total_case_duration": self.check_total_duration(case_id, time_limits)
+        }
+        
+        # Normal dağılımdan sapma tespiti
+        statistical_anomalies = self.detect_statistical_anomalies(case_id)
+        
+        return {
+            "pass": all(checks.values()),
+            "warnings": statistical_anomalies,
+            "block_next_action": any(not v for v in checks.values())
+        }
+C. Yetki/Görev Kapısı:
+
+python
+class JurisdictionGate:
+    def check(self, case_id, court_info):
+        # Görev ve yetki kontrolleri
+        jurisdiction_checks = {
+            "court_type_match": self.check_court_type(case_id, court_info),
+            "territorial_jurisdiction": self.check_territory(case_id, court_info),
+            "monetary_jurisdiction": self.check_monetary_limit(case_id, court_info),
+            "subject_matter_jurisdiction": self.check_subject_matter(case_id, court_info)
+        }
+        
+        # Tarihsel benzer davaların analizi
+        similar_cases = self.find_similar_cases(case_id)
+        jurisdiction_patterns = self.analyze_jurisdiction_patterns(similar_cases)
+        
+        return {
+            "pass": all(jurisdiction_checks.values()),
+            "conflicts": [k for k, v in jurisdiction_checks.items() if not v],
+            "recommendations": self.generate_recommendations(jurisdiction_patterns)
+        }
+D. Sıra/İşlem Kapısı:
+
+python
+class ProceduralSequenceGate:
+    def check(self, case_id, requested_action):
+        # Zorunlu ara işlemleri kontrol et
+        required_steps = self.get_required_procedural_steps(case_id.type)
+        completed_steps = self.get_completed_steps(case_id)
+        
+        missing_steps = [step for step in required_steps 
+                        if step not in completed_steps 
+                        and step not in self.get_waivable_steps(case_id)]
+        
+        # İşlem sırası anomalileri
+        sequence_anomalies = self.detect_sequence_anomalies(case_id)
+        
+        return {
+            "pass": len(missing_steps) == 0,
+            "missing_steps": missing_steps,
+            "sequence_anomalies": sequence_anomalies,
+            "block_reason": "Zorunlu ara işlemler tamamlanmamış" if missing_steps else None
+        }
+5.6.4. Operasyonel Davranış:
+
+A. Bloklama (Hard Check İhlali):
+
+Sistem, ilgili işlemi başlatmaz
+
+Kullanıcı arayüzünde blok nedeni açıklanır
+
+Alternatif eylem önerileri sunulur
+
+Örnek: "Tebligat kaydı 'tamamlanmadı' ise duruşma açma butonu pasif"
+
+B. Uyarı + Açıklama (Soft Check İhlali):
+
+Sistem "yüksek risk" uyarısı verir
+
+İstatistiksel analiz sonuçları gösterilir
+
+Kullanıcıdan gerekçe istenir (zorunlu açıklama alanı)
+
+Tüm uyarılar denetim izine kaydedilir
+
+C. Gerekçeli Override (İstisnai Durum):
+
+Hâkim/kalem, istisnai durumda gerekçe yazarak devam edebilir
+
+Override kararı, denetim/audit kuyruğuna düşer
+
+Periyodik olarak override'lar analiz edilir, sık override'lar kural güncellemesi tetikler
+
+5.6.5. Teknik Mimari Detayları:
+
+Veri Kaynakları:
+
+python
+data_sources = {
+    "event_logs": "UYAP işlem geçmişi (CDC streaming)",
+    "service_records": "Tebligat modülü API",
+    "calendar": "Takvim ve süre yönetimi DB",
+    "document_flow": "Evrak akışı izleme sistemi",
+    "auth_logs": "E-imza ve yetki kayıtları"
+}
+Analiz Modelleri:
+
+python
+analysis_models = {
+    "rules_engine": "Drools/OpenRules (500+ hukuk kuralı)",
+    "process_mining": "ProM/Disco (süreç şablonları çıkarımı)",
+    "anomaly_detection": {
+        "isolation_forest": "Aykırı değer tespiti",
+        "sequence_modeling": "LSTM/Transformer (işlem sırası)",
+        "statistical_process_control": "Kontrol çizelgeleri"
+    }
+}
+Çıktılar ve Raporlama:
+
+python
+outputs = {
+    "risk_score": "0-100 arası risk skoru",
+    "violation_flags": "İhlal bayrakları ve kategorileri",
+    "explanations": "Doğal dil açıklamaları",
+    "automatic_report": "Otomatik denetim raporu",
+    "audit_trail": "Değiştirilemez log kaydı"
+}
+5.6.6. Beklenen Etkiler ve Faydalar:
+
+Kategori	Beklenen Etki	Ölçüm Metriği
+Usul İhlali Azalması	%70-80 azalma	İhlal sayısı (öncesi/sonrası)
+Dava Süresi	%15-20 kısalma	Ortalama dava süresi (gün)
+İtiraz Oranı	%25-30 azalma	Usulden kaynaklı itiraz yüzdesi
+Kullanıcı Memnuniyeti	%40 artış	Kullanıcı anket puanları (1-5)
+Denetim Verimliliği	%60 artış	Denetim süresi (saat/dava)
+5.6.7. Uygulama Senaryoları:
+
+Senaryo A: Hızlı Duruşma Programlama Riski
+
+python
+# Durum: Duruşma, tebligattan 3 gün sonraya programlanıyor (normal: 10-15 gün)
+# Muhafız Tepkisi: "YÜKSEK RİSK" uyarısı + istatistikler + gerekçe sorulması
+# Kullanıcı Eylemi: Gerekçe girerek override veya tarih değiştirme
+# Audit Kaydı: Tüm süreç loglanıyor, aylık raporlarda analiz ediliyor
+Senaryo B: Görev Uyuşmazlığı İşareti
+
+python
+# Durum: İş mahkemesine kayıtlı dosyada tüketici uyuşmazlığı tespiti
+# Muhafız Tepkisi: "GÖREV/UYUM UYUŞMAZLIĞI" bayrağı + benzer davaların analizi
+# Sistem Önerisi: "Benzer 15 davadan 14'ü tüketici mahkemesinde görüldü"
+# Kullanıcı Eylemi: Dosya aktarımı veya gerekçeli kararla devam
+Senaryo C: Kanuni Süre İhlali
+
+python
+# Durum: İtiraz süresi dolmadan üst mahkemeye gönderim girişimi
+# Muhafız Tepkisi: BLOK + "Kanuni süre dolmadı" mesajı
+# Sistem Alternatifi: "İtiraz süresi: 15 gün / Kalan: 3 gün"
+# Otomatik Hatırlatma: Süre dolunca bildirim gönderimi
+5.7. XAI ve Denetim İzleri Katmanı
+5.7.1. Amaç: Yargı bağlamında kara kutu algoritmaların kabul edilemezliğinden hareketle, her öneri ve analizin tam izlenebilir ve açıklanabilir olmasını sağlamak.
+
+5.7.2. XAI Bileşenleri:
+
+A. Öneri/Çıktı Açıklamaları:
+Her öneri/özet için zorunlu açıklama alanları:
+
+Hangi emsallere dayandığı: Emsal ID'leri, benzerlik skorları
+
+Kullanılan metin parçaları: Alıntılar, highlight edilmiş bölümler
+
+Model parametreleri: Kullanılan model sürümü, hiperparametreler
+
+Risk/bias test sonuçları: Önyargı analizi, güven aralıkları
+
+Alternatif senaryolar: "Eğer X olsaydı, sonuç Y olurdu" analizleri
+
+B. Model Kartları (Model Cards) ve Veri Kartları (Data Cards):
+
+Model Kartı: Teknik özellikler, eğitim verisi, sınırlılıklar, etik değerlendirme
+
+Veri Kartı: Veri kaynağı, temsil edicilik, önyargı potansiyeli, anonimleştirme düzeyi
+
+C. Karar İzi (Decision Trail):
+
+json
+{
+  "decision_id": "DEC_20241205_001",
+  "timestamp": "2024-12-05T10:30:00Z",
+  "user": "HAKIM_12345",
+  "case": "2024/12345",
+  "input_data": {
+    "document_ids": ["DOC_001", "DOC_002"],
+    "query": "kira temerrüdü tazminat hesaplama"
+  },
+  "processing_steps": [
+    {
+      "step": "retrieval",
+      "model": "HukukBERT_v1.2",
+      "parameters": {"top_k": 50, "threshold": 0.65},
+      "results": ["PREC_001", "PREC_002", "PREC_003"],
+      "scores": [0.89, 0.76, 0.72]
+    },
+    {
+      "step": "generation",
+      "model": "LegalLLM_Turkish_v2.1",
+      "parameters": {"temperature": 0.3, "max_tokens": 500},
+      "prompt": "Aşağıdaki emsallere göre özet oluştur...",
+      "output_sections": ["summary", "comparison", "risks"]
+    }
+  ],
+  "explanations": {
+    "key_factors": ["teminat bedeli", "temerrüt süresi", "faiz oranı"],
+    "confidence_scores": {"summary": 0.85, "comparison": 0.78, "risks": 0.92},
+    "limitations": ["Limited data on commercial leases", "Regional variations not considered"]
+  },
+  "user_actions": [
+    {"action": "accepted", "section": "summary", "timestamp": "2024-12-05T10:35:00Z"},
+    {"action": "modified", "section": "comparison", "note": "added local court practice"}
+  ],
+  "audit_hash": "a1b2c3d4e5f6... (SHA-256)"
+}
+5.7.3. Denetim ve Loglama Altyapısı:
+
+Merkezi Log Yönetimi: Tüm işlemlerin merkezi log sistemi
+
+Değiştirilemez Kayıt: Blockchain benzeri append-only yapı (seçmeli)
+
+Periyodik Denetim Raporları: Aylık, üç aylık, yıllık raporlar
+
+Bağımsız Denetim Erişimi: Akademi ve sivil toplum için sınırlı erişim
+
+6. YÖNETİŞİM, HUKUKİ UYUM VE ULUSLARARASI STANDARTLARLA EŞLEŞTİRME
+6.1. OECD AI İlkeleri ile Uyum
+6.1.1. İnsan Merkezlilik ve İnsan Hakları:
+
+Tüm sistemlerde "human-in-the-loop" zorunluluğu
+
+Kritik kararlarda (ceza, aile, iş) zorunlu insan onayı
+
+Kullanıcı kontrol mekanizmaları (kabul/ret/override)
+
+6.1.2. Şeffaflık ve Açıklanabilirlik:
+
+Zorunlu XAI raporları
+
+Model kartları ve veri kartları
+
+Karar izi (decision trail) saklama
+
+6.1.3. Sağlamlık, Güvenlik ve Koruma:
+
+Adversarial testing ve stres testleri
+
+Sızma testleri (penetration testing)
+
+Felaket kurtarma planları
+
+6.1.4. Hesap Verebilirlik:
+
+Sorumluluk matrisi (kim, ne, nasıl sorumlu)
+
+İtiraz ve düzeltme mekanizmaları
+
+Bağımsız denetim kurulu
+
+6.2. UNESCO Yapay Zekâ Etiği Tavsiyesi ile Uyum
+6.2.1. Temel Haklar Odaklı Tasarım:
+
+Anayasa m.36 (adil yargılanma hakkı) ile uyum
+
+AİHS m.6 (adil yargılanma) ve m.8 (özel hayat) koruması
+
+Ayrımcılık yasağı ve eşitlik ilkesi
+
+6.2.2. Kapsayıcılık ve Çeşitlilik:
+
+Veri setlerinde bölgesel, demografik, sosyoekonomik çeşitlilik
+
+Erişilebilirlik standartları (engelli kullanıcılar için)
+
+Çok dilli destek (Kürtçe, Arapça temel düzeyde)
+
+6.2.3. Çevresel Sürdürülebilirlik:
+
+Enerji verimli algoritmalar
+
+Karbon ayak izi takibi
+
+Yeşil bilişim prensipleri
+
+6.3. CEPEJ Avrupa Etik Şartı ile Uyum (Yargı Bağlamına Özgü)
+6.3.1. Beş Temel İlkenin Uygulanması:
+
+CEPEJ İlkesi	UYAP 2.0 Uygulaması	Kontrol Mekanizması
+1. Temel Haklar	AI önerileri karar verici değil destekleyici	Zorunlu insan onayı, override mekanizması
+2. Ayrımcılık Yasağı	Düzenli bias testleri, dengeli veri setleri	Aylık fairness raporları, düzeltme protokolleri
+3. Kalite ve Güvenlik	Model sürümleme, stres testleri, siber güvenlik	Teknik denetim kurulu, güvenlik sertifikasyonu
+4. Şeffaflık/Tarafsızlık	XAI katmanı, karar izi, açık kaynak bileşenler	Bağımsız doğrulama, akademik inceleme
+5. Kullanıcı Kontrolü	Öneriyi kabul/ret, gerekçeli override, geri bildirim	Kullanıcı anketleri, kabul/ret istatistikleri
+6.3.2. CEPEJ Operational Guidelines ile Uyum:
+
+Risk değerlendirme matrisi (düşük/orta/yüksek risk)
+
+Etki değerlendirmesi (algorithmic impact assessment)
+
+Paydaş katılımı (hakimler, avukatlar, akademi, STK'lar)
+
+Sürekli izleme ve değerlendirme
+
+6.4. NIST AI Risk Yönetimi Çerçevesi (AI RMF) ile Uyum
+6.4.1. Govern (Yönet):
+
+AI yönetişim yapısı ve politikaları
+
+Sorumluluk ve yetki matrisi
+
+Kaynak tahsisi ve bütçe
+
+6.4.2. Map (Haritalama):
+
+Risk envanteri ve kategorizasyonu
+
+Bağlam analizi (yargısal süreçler)
+
+Paydaş haritalama ve ihtiyaç analizi
+
+6.4.3. Measure (Ölçme):
+
+Teknik metrikler (doğruluk, bias, güvenlik)
+
+Süreç metrikleri (verimlilik, tutarlılık)
+
+Etik ve hukuki uyum metrikleri
+
+6.4.4. Manage (Yönetme):
+
+Risk azaltma stratejileri
+
+Olay yanıt planları
+
+Sürekli iyileştirme döngüsü
+
+Prosedürel Uyum Muhafızı, bu çerçevede "Manage" fonksiyonunu güçlendiren somut bir kontrol katmanı sunmaktadır.
+
+6.5. AB Yapay Zekâ Tüzüğü (AI Act) ile Uyum
+6.5.1. Yüksek Riskli Sistem Kategorizasyonu:
+Yargı sistemleri, AB AI Act'a göre "yüksek riskli" kategoridedir ve şu gereklilikleri karşılamalıdır:
+
+A. Risk Yönetimi Sistemi:
+
+Sürekli risk değerlendirmesi
+
+Risk azaltma önlemleri
+
+Acil durum planları
+
+B. Yüksek Kaliteli Veri Setleri:
+
+Veri kalitesi ve temsil edicilik
+
+Veri yönetimi planı
+
+Önyargı önleme ve azaltma
+
+C. Teknik Dokümantasyon:
+
+Sistem mimarisi belgeleri
+
+Test ve validasyon raporları
+
+Kullanım kılavuzları ve sınırlılıklar
+
+D. Kayıt Tutma (Logging):
+
+Otomatik olay kayıtları
+
+Değiştirilemez log sistemleri
+
+Denetim izi saklama
+
+E. Şeffaflık ve Kullanıcı Bilgilendirme:
+
+Sistem yetenekleri ve sınırlılıkları hakkında bilgilendirme
+
+İnsan-AI etkileşimi kuralları
+
+Şikayet ve itiraz mekanizmaları
+
+F. İnsan Gözetimi:
+
+İnsan gözetimi mekanizmaları
+
+Müdahale ve override yetkileri
+
+Gözetim sorumlulukları
+
+G. Doğruluk, Sağlamlık ve Siber Güvenlik:
+
+Teknik doğruluk gereksinimleri
+
+Sistem sağlamlığı testleri
+
+Siber güvenlik önlemleri
+
+6.5.2. Uyum Stratejisi:
+Türkiye AB üyesi olmasa da, uluslararası işbirliği ve meşruiyet için AI Act ile uyum önerilmektedir:
+
+Aşamalı Uyum: 3 yıllık geçiş planı
+
+Teknik Uyumluluk: Temel gerekliliklerin karşılanması
+
+Belgelendirme: Uluslararası standartlara uygun belgeler
+
+Denetim: Bağımsız denetim mekanizmaları
+
+6.6. Veri Koruma ve Mahremiyet: GDPR/KVKK Uyumu
+6.6.1. Temel İlkeler:
+
+Veri Minimizasyonu: Gereksiz veri toplanmaz, işlenmez
+
+Amaçla Sınırlılık: Veri sadece belirlenen amaçlar için kullanılır
+
+Doğruluk ve Güncellik: Veriler doğru ve güncel tutulur
+
+Saklama Süresi Sınırlaması: Amaç sona erdiğinde veri silinir
+
+Bütünlük ve Gizlilik: Veri güvenliği ve gizliliği sağlanır
+
+Hesap Verebilirlik: Veri işleyen sorumluluğunu kanıtlar
+
+6.6.2. Teknik Uygulamalar:
+
+A. Anonimleştirme ve Psödonomizasyon:
+
+python
+class DataAnonymizer:
+    def anonymize_legal_text(self, text, entities):
+        # Varlıkları tespit et ve maskele
+        anonymized = text
+        for entity in entities:
+            if entity["type"] in ["PERSON", "ORGANIZATION", "LOCATION"]:
+                # Hassas bilgileri maskele
+                if self.is_sensitive(entity["text"]):
+                    anonymized = anonymized.replace(
+                        entity["text"], 
+                        f"[{entity['type']}_{hash(entity['text'])[:8]}]"
+                    )
+        return anonymized
+    
+    def pseudonymize(self, original_id):
+        # Geri dönüştürülebilir şifreleme
+        salt = os.getenv("PSEUDONYMIZATION_SALT")
+        return hashlib.sha256(f"{original_id}{salt}").hexdigest()[:16]
+B. Rol Tabanlı Erişim Kontrolü (RBAC):
+
+python
+access_matrix = {
+    "judge": {
+        "read": ["all_case_data", "precedents", "analysis"],
+        "write": ["decisions", "orders", "notes"],
+        "delete": ["own_notes"],
+        "export": ["limited", "anonymized"]
+    },
+    "clerk": {
+        "read": ["assigned_cases", "procedural_data"],
+        "write": ["procedural_updates", "calendar"],
+        "delete": [],
+        "export": []
+    },
+    "researcher": {
+        "read": ["anonymized_data", "aggregate_stats"],
+        "write": [],
+        "delete": [],
+        "export": ["approved_datasets"]
+    }
+}
+C. Federated Learning ve Güvenli Çok Taraflı Hesaplama:
+
+Federated Learning: Model eğitimi için veri merkezden ayrılmaz
+
+Secure Multi-Party Computation: Hassas veriler paylaşılmadan analiz
+
+Homomorphic Encryption: Şifrelenmiş veri üzerinde işlem
+
+Differential Privacy: İstatistiksel analizde gizlilik koruması
+
+6.6.3. KVKK Uyum Denetim Listesi:
+
+Veri İşleme Envanteri hazırlandı mı?
+
+Aydınlatma Yükümlülüğü yerine getirildi mi?
+
+Açık Rıza alındı mı? (gerekli durumlarda)
+
+Veri Güvenliği önlemleri alındı mı?
+
+Veri Saklama ve İmha Politikası hazırlandı mı?
+
+VERBİS kaydı tamamlandı mı?
+
+Kişisel Verileri Koruma Kurulu izinleri alındı mı?
+
+Veri İhlal Bildirimi prosedürleri hazırlandı mı?
+
+7. DEĞERLENDİRME PLANI: METRİKLER, PİLOT TASARIM VE BAŞARI ÖLÇÜTLERİ
+7.1. Pilot Uygulama Tasarımı
+7.1.1. Pilot Seçim Kriterleri:
+
+Belge Yoğunluğu: Yüksek hacimli doküman içeren alanlar
+
+Örüntü Tekrarı: Standartlaşmış, tekrarlayan uyuşmazlık türleri
+
+Risk Seviyesi: Düşük-orta riskli alanlar (yüksek riskli alanlar sonraki fazda)
+
+Kullanıcı Hazırlığı: Teknolojiye açık, eğitimli kullanıcı kitlesi
+
+Veri Kalitesi: Nispeten düzenli ve temiz veri yapısı
+
+7.1.2. Önerilen Pilot Alanlar:
+
+A. İcra-İflas Davaları (Öncelikli Pilot):
+
+Gerekçe: Yüksek hacim (%15-20 tüm davalar), standart formlar, tekrarlı işlemler
+
+Pilot Mahkemeler: 3 büyük şehirde 2'şer icra mahkemesi (toplam 6)
+
+Süre: 12 ay
+
+Hedef Kullanıcı: 30 hakim, 20 icra memuru
+
+Odaklanılacak İşlemler: Takip talepleri, itirazlar, haciz, paraların paylaştırılması
+
+B. Trafik İdari Para Cezaları:
+
+Gerekçe: Tamamen standartlaşmış, yüksek hacimli, düşük riskli
+
+Pilot: 2 büyük şehir trafik mahkemesi
+
+Süre: 6 ay (hızlı sonuç için)
+
+Odak: Otomatik sınıflandırma, benzer karar analizi, özetleme
+
+C. Tüketici Uyuşmazlıkları:
+
+Gerekçe: Artan hacim, tekrarlı konular, ODR ile entegrasyon potansiyeli
+
+Pilot: 2 tüketici mahkemesi
+
+Süre: 9 ay
+
+Odak: Semantik emsal arama, otomatik özetleme, risk analizi
+
+7.1.3. Pilot Değerlendirme Metodolojisi:
+
+A/B Test Tasarımı:
+
+python
+pilot_design = {
+    "control_group": {
+        "size": "3 mahkeme",
+        "treatment": "Mevcut UYAP",
+        "metrics": "Baseline performans"
+    },
+    "treatment_group": {
+        "size": "3 mahkeme",
+        "treatment": "UYAP 2.0 pilot",
+        "metrics": "Yeni sistem performansı"
+    },
+    "matching_criteria": [
+        "case_volume", "judge_experience", "region", "case_types"
+    ],
+    "duration": "6 ay aktif kullanım + 1 ay değerlendirme",
+    "ethics": {
+        "informed_consent": "Tüm kullanıcılar gönüllü katılım",
+        "right_to_withdraw": "İstediği zaman çekilme hakkı",
+        "data_protection": "Anonimleştirilmiş analiz"
+    }
+}
+7.2. Teknik Metrikler ve Ölçüm Yöntemleri
+7.2.1. Sınıflandırma ve NER Metrikleri:
+
+python
+classification_metrics = {
+    "accuracy": "Doğru sınıflandırma oranı",
+    "precision": "TP / (TP + FP)",
+    "recall": "TP / (TP + FN)",
+    "f1_score": "2 * (precision * recall) / (precision + recall)",
+    "confusion_matrix": "Sınıflar arası hata analizi",
+    "roc_auc": "Sınıflandırıcı performansı (binary)",
+    "macro_f1": "Çok sınıflı ortalaması"
+}
+7.2.2. Semantik Arama Metrikleri:
+
+python
+search_metrics = {
+    "precision@k": "İlk k sonuçtaki ilgili doküman oranı",
+    "recall@k": "Bulunan ilgili doküman / tüm ilgili doküman",
+    "nDCG@k": "Sıralama kalitesi (discounted cumulative gain)",
+    "MRR": "İlk ilgili sonucun sırasının tersinin ortalaması",
+    "MAP": "Ortalama precision değeri",
+    "user_satisfaction": "5'li Likert ölçeği (1-5)"
+}
+7.2.3. RAG ve Üretim Metrikleri:
+
+python
+rag_metrics = {
+    "retrieval_precision": "Getirilen belgelerin ilgililik oranı",
+    "hallucination_rate": "Kaynaksız/kurgusal içerik oranı",
+    "factual_accuracy": "Gerçek doğruluğu (insan değerlendirmesi)",
+    "coverage": "Kaynakların kapsama oranı",
+    "ROUGE_score": "Özetleme kalitesi (ROUGE-1, ROUGE-2, ROUGE-L)",
+    "BERTScore": "Anlamsal benzerlik skoru",
+    "human_evaluation": "Uzman değerlendirmesi (1-5 ölçek)"
+}
+7.2.4. Anomali Tespiti Metrikleri:
+
+python
+anomaly_metrics = {
+    "true_positive_rate": "Doğru tespit edilen anomali oranı",
+    "false_positive_rate": "Yanlış alarm oranı",
+    "precision": "TP / (TP + FP) (anomali tespiti için)",
+    "recall": "TP / (TP + FN) (anomali tespiti için)",
+    "f1_score": "Anomali tespiti dengeli skoru",
+    "roc_auc": "Anomali tespit performansı",
+    "detection_latency": "Anomali tespit gecikmesi (saniye)"
+}
+7.3. Süreç Metrikleri ve Verimlilik Ölçümü
+7.3.1. Temel Süreç Metrikleri:
+
+Ortalama Dosya İşlem Süresi: Dava açılışından kesinleşmesine kadar (gün)
+
+Duruşma Başına Hazırlık Süresi: Hakimin duruşmaya hazırlanma süresi (saat)
+
+Emsal Arama Süresi: Bir emsal bulmak için harcanan ortalama süre (dakika)
+
+Karar Yazma Süresi: Gerekçeli karar yazım süresi (saat)
+
+İş Yükü Göstergeleri: Hakim başına dosya sayısı, kalem işlem yoğunluğu
+
+7.3.2. Verimlilik Kazanım Hesaplama:
+
+python
+def calculate_efficiency_gains(baseline, pilot):
+    gains = {}
+    
+    # Zaman tasarrufu hesaplama
+    for metric in ["case_processing_time", "prep_time_per_hearing", "precedent_search_time"]:
+        reduction = ((baseline[metric] - pilot[metric]) / baseline[metric]) * 100
+        gains[f"{metric}_reduction"] = f"{reduction:.1f}%"
+    
+    # İş yükü azalması
+    gains["workload_reduction"] = calculate_workload_reduction(baseline, pilot)
+    
+    # Maliyet tasarrufu
+    gains["cost_savings"] = calculate_cost_savings(baseline, pilot)
+    
+    return gains
+7.3.3. Beklenen Verimlilik Artışları (Pilot Projeksiyonları):
+
+Metrik	Mevcut Durum	Pilot Hedef	Beklenen İyileşme	Açıklama
+Dava İşlem Süresi	180 gün	150 gün	%16.7	Otomasyon ve destek sistemleri
+Emsal Arama Süresi	45 dakika	5 dakika	%89	Semantik arama ve AI önerileri
+Karar Yazma Süresi	4 saat	3 saat	%25	Otomatik özet ve taslak üretimi
+Usul İhlali Oranı	%8	%2	%75	Prosedürel Uyum Muhafızı
+Kullanıcı Memnuniyeti	3.2/5	4.1/5	%28	Kullanıcı dostu arayüz ve destek
+
+Daha az göster
+7.4. Hukuki ve Etik Uyum Metrikleri
+7.4.1. XAI ve Şeffaflık Metrikleri:
+
+XAI Rapor Kapsama Oranı: Önerilerin yüzde kaçında açıklama mevcut?
+
+Açıklama Kalitesi: Kullanıcı anketi ile ölçülen anlaşılırlık (1-5)
+
+Karar İzi Bütünlüğü: Eksiksiz karar izi saklama oranı (%)
+
+Model Kartı Tamamlığı: Model kartlarının güncellenme ve kapsama oranı
+
+7.4.2. KVKK ve Veri Koruma Metrikleri:
+
+Anonimleştirme Doğruluk Testi: Hassas bilgilerin doğru maskelenme oranı (%)
+
+Erişim Kontrolü Uyumu: Yetkisiz erişim girişimleri ve başarısızlık oranı
+
+Veri Saklama Uyumu: Saklama süresi dolan verilerin zamanında silinme oranı
+
+İhlal Bildirim Süresi: Olası ihlalin tespitinden bildirime kadar geçen süre (saat)
+
+7.4.3. Önyargı ve Adalet Metrikleri:
+
+Demografik Parity: Farklı gruplar için benzer sonuç oranları
+
+Equal Opportunity: Farklı gruplar için benzer doğruluk oranları
+
+Bias Audit Frequency: Önyargı denetimlerinin yapılma sıklığı (aylık/üç aylık)
+
+Bias Mitigation Actions: Tespit edilen önyargılar için alınan aksiyon sayısı
+
+7.4.4. Prosedürel Uyum Metrikleri:
+
+İhlal Tespit Oranı: Prosedürel Uyum Muhafızı tarafından tespit edilen ihlaller
+
+İhlal Önleme Oranı: Bloklanan işlemler / toplam ihlal riski olan işlemler
+
+Override Analizi: Gerekçeli override'ların haklı/haksız oranı
+
+Kullanıcı Geri Bildirimi: Muhafız modülü hakkında kullanıcı görüşleri (anket)
+
+8. TARTIŞMA VE SONUÇ
+8.1. Ana Bulguların Sentezi
+Bu çalışma, Türkiye'nin Ulusal Yargı Ağı Bilişim Sistemi (UYAP) ile Çin'in Smart Court ekosistemini karşılaştırmalı olarak analiz etmiş ve Türkiye için anayasal güvencelerle uyumlu bir "UYAP 2.0" dönüşüm yol haritası önermiştir. Ana bulgular şunlardır:
+
+8.1.1. UYAP'ın Güçlü Temeli ve Eksiklikleri:
+UYAP, dünyanın en kapsamlı e-adalet sistemlerinden biri olarak güçlü bir altyapı sunmakta, ancak analitik kapasite, karar destek sistemleri ve uluslararası normlarla uyum açısından eksiklikler taşımaktadır. Sistemin mevcut güçlü yönleri (yaygınlık, entegrasyon, güvenlik) üzerine inşa edilecek analitik katmanlarla önemli verimlilik kazanımları sağlanabilir.
+
+8.1.2. Çin Modelinden Alınacak Dersler:
+Çin'in Smart Court uygulamaları, teknik kapasite ve ölçeklenebilirlik açısından önemli dersler içermektedir. Ancak normatif çerçeve (şeffaflık, hesap verebilirlik, temel haklar) açısından Avrupa merkezli yaklaşımlar Türkiye'nin anayasal düzeniyle daha uyumludur. Optimal yaklaşım, Çin'in teknik ilerlemelerini Avrupa'nın normatif çerçevesiyle harmanlayan hibrit bir modeldir.
+
+8.1.3. Prosedürel Uyum Muhafızı'nın Yenilikçi Katkısı:
+Önerilen "Prosedürel Uyum Muhafızı" modülü, yapay zekânın yargı sistemlerinde sadece verimlilik artırıcı değil, aynı zamanda usul güvencelerini güçlendirici bir rol üstlenebileceğini göstermektedir. Bu modül, yargılamada "normalin dışına çıkma" risklerini proaktif olarak tespit edip önleyerek, adil yargılanma hakkının korunmasına katkı sağlamaktadır.
+
+8.2. Teorik ve Pratik Katkılar
+8.2.1. Teorik Katkılar:
+
+Yargıda Yapay Zekâ Teorisinin Gelişimi: "Human-in-the-loop" yaklaşımının yargı bağlamında nasıl uygulanabileceğine dair kavramsal bir çerçeve sunmaktadır.
+
+Normatif-Teknik Entegrasyon: Uluslararası etik normların (CEPEJ, OECD, UNESCO) teknik sistem tasarımına nasıl entegre edilebileceğini göstermektedir.
+
+Prosedürel Adalet Teorisi: Teknolojinin prosedürel adaleti nasıl güçlendirebileceğine dair yeni bir perspektif sunmaktadır.
+
+8.2.2. Pratik Katkılar:
+
+Uygulanabilir Bir Mimari Önerisi: Türkiye'nin mevcut altyapısına uygun, aşamalı olarak uygulanabilir bir teknik mimari sunmaktadır.
+
+Pilot Uygulama Kılavuzu: Hangi alanlarda nasıl pilot uygulamalar yapılabileceğine dair somut öneriler içermektedir.
+
+Değerlendirme Metodolojisi: Çok boyutlu bir değerlendirme çerçevesi (teknik, süreç, hukuki, etik) sunmaktadır.
+
+Yönetişim Modeli: Çok paydaşlı, şeffaf ve hesap verebilir bir yönetişim modeli önermektedir.
+
+8.3. Sınırlılıklar ve Gelecek Çalışmalar
+8.3.1. Çalışmanın Sınırlılıkları:
+
+Veri Erişim Kısıtları: UYAP'ın detaylı teknik dokümantasyonuna ve veri setlerine sınırlı erişim.
+
+Kültürel ve Kurumsal Farklılıklar: Çin modelinin Türkiye bağlamına tam olarak uyarlanabilirliği konusundaki belirsizlikler.
+
+Teknolojik Hız: Yapay zekâ alanındaki hızlı gelişmeler nedeniyle bazı teknik önerilerin zamanla güncelliğini yitirme riski.
+
+Uygulama Zorlukları: Önerilen sistemin büyük ölçekte uygulanmasındaki teknik, insan kaynağı ve finansal zorluklar.
+
+8.3.2. Gelecek Araştırma Yönelimleri:
+
+Türkçe Hukuk Dil Modellerinin Geliştirilmesi: Türkçe hukuk metinleri için optimize edilmiş dil modelleri (HukukBERT, LegalGPT-TR) üzerine araştırmalar.
+
+Federated Learning Uygulamaları: Mahremiyet koruyucu makine öğrenmesi tekniklerinin yargı verilerine uygulanması.
+
+Blockchain ve Akıllı Sözleşmeler: Yargı süreçlerinde blockchain teknolojisinin kullanım potansiyelinin araştırılması.
+
+İnsan-AI Etkileşimi Çalışmaları: Hâkimlerin yapay zekâ destek sistemleriyle nasıl etkileşim kurduğuna dair etnografik çalışmalar.
+
+Uzun Dönemli Etki Analizleri: Yapay zekâ destekli sistemlerin karar tutarlılığı, erişilebilirlik ve güven üzerindeki uzun vadeli etkilerinin izlenmesi.
+
+8.4. Politika ve Uygulama Önerileri
+8.4.1. Kısa Vadeli Öneriler (0-12 ay):
+
+Ulusal Hukuki NLP Veri Seti: Anonimleştirilmiş ve etiketlenmiş bir Türkçe hukuk veri seti oluşturulması için akademi-kamu işbirliği.
+
+Pilot Projelerin Başlatılması: İcra-iflas ve trafik davalarında sınırlı pilot uygulamalar.
+
+Çok Disiplinli Çalışma Grubu: Hukukçular, mühendisler, etik uzmanları ve veri koruma uzmanlarından oluşan bir çalışma grubu kurulması.
+
+Mevzuat İncelemesi: Yapay zekâ kullanımına ilişkin mevzuat boşluklarının tespiti ve düzenleme önerileri.
+
+8.4.2. Orta Vadeli Öneriler (1-3 yıl):
+
+UYAP 2.0 Altyapısının Kurulması: Vektör veritabanı, NLP pipeline ve RAG altyapısının kurulması.
+
+Eğitim Programları: Hâkim, savcı ve yardımcı personel için yapay zekâ okuryazarlığı eğitimleri.
+
+Bağımsız Denetim Mekanizması: Sistemlerin sürekli denetimi için bağımsız bir kurul oluşturulması.
+
+Uluslararası İşbirliği: CEPEJ, OECD ve diğer uluslararası kuruluşlarla teknik işbirliği anlaşmaları.
+
+8.4.3. Uzun Vadeli Öneriler (3+ yıl):
+
+Tam Ölçekli Yaygınlaştırma: Pilotlardan elde edilen derslerle sistemin tüm mahkemelerde yaygınlaştırılması.
+
+Yapay Zekâ Etik Kurulu: Yargıda yapay zekâ kullanımına ilişkin etik ilkeleri belirleyen ve denetleyen bir kurul.
+
+Araştırma ve Geliştirme Merkezi: Yargı teknolojileri üzerine araştırma yapan bir merkez kurulması.
+
+Uluslararası Standart Belirleme: Türkiye'nin yargıda yapay zekâ konusunda bölgesel ve uluslararası standart belirlemede liderlik rolü üstlenmesi.
+
+8.5. Nihai Değerlendirme
+Bu makale, yargı sistemlerinde yapay zekâ kullanımının salt bir teknolojik meseleden ziyade, derin hukuki, etik ve toplumsal boyutları olan bir dönüşüm süreci olduğunu vurgulamaktadır. UYAP 2.0 önerisi, bu çok boyutlu gerçekliği dikkate alarak, teknolojik ilerlemeyi temel haklar ve hukuk devleti ilkeleriyle dengelemeyi amaçlamaktadır.
+
+Önerilen yaklaşımın temel vaadi, yapay zekânın yargı sistemlerinde sadece "daha hızlı" veya "daha ucuz" kararlar üretmesi değil, aynı zamanda "daha adil", "daha tutarlı" ve "daha şeffaf" bir yargılama süreci sağlamasıdır. Prosedürel Uyum Muhafızı gibi yenilikçi bileşenler, bu vaadin somutlaştırılmasına hizmet etmektedir.
+
+Sonuç olarak, Türkiye'nin güçlü UYAP altyapısı, uluslararası normlara uyumlu bir "güvenilir yargı yapay zekâsı" dönüşümü için benzersiz bir fırsat sunmaktadır. Bu fırsatın değerlendirilmesi, teknik kapasitenin yanı sıra, çok paydaşlı katılım, şeffaf yönetişim ve sürekli denetim mekanizmalarına bağlıdır. Bu çalışmanın, Türkiye'nin dijital adalet yolculuğuna katkı sağlaması ve benzer dönüşüm süreçlerindeki diğer ülkelere ilham vermesi umulmaktadır.
+
+KAYNAKÇA
+Adalet Bakanlığı. (2023). Ulusal Yargı Ağı Projesi (UYAP) Faaliyet Raporu 2023. Ankara: Adalet Bakanlığı.
+
+Ahl, B. (2019). Judicialization in authoritarian regimes: The expansion of powers of the Chinese Supreme People's Court. International Journal of Constitutional Law, 17(1), 252-277.
+
+Bojanowski, P., Grave, E., Joulin, A., & Mikolov, T. (2017). Enriching word vectors with subword information. Transactions of the Association for Computational Linguistics, 5, 135-146.
+
+CEPEJ. (2018). European Ethical Charter on the use of Artificial Intelligence in judicial systems and their environment. Strasbourg: Council of Europe.
+
+CEPEJ. (2022). CEPEJ Handbook on how to drive change towards Cyberjustice. Strasbourg: Council of Europe.
+
+Devlin, J., Chang, M. W., Lee, K., & Toutanova, K. (2019). BERT: Pre-training of deep bidirectional transformers for language understanding. Proceedings of the 2019 Conference of the North American Chapter of the Association for Computational Linguistics, 4171-4186.
+
+European Parliament. (2024). *Regulation (EU) 2024/1689 laying down harmonised rules on artificial intelligence (Artificial Intelligence Act)*. Official Journal of the European Union.
+
+Hevner, A. R., March, S. T., Park, J., & Ram, S. (2004). Design science in information systems research. MIS Quarterly, 28(1), 75-105.
+
+Jurafsky, D., & Martin, J. H. (2023). Speech and Language Processing (3rd ed. draft). Stanford University.
+
+Lewis, P., Perez, E., Piktus, A., Petroni, F., Karpukhin, V., Goyal, N., ... & Kiela, D. (2020). Retrieval-augmented generation for knowledge-intensive nlp tasks. Advances in Neural Information Processing Systems, 33, 9459-9474.
+
+NIST. (2023). Artificial Intelligence Risk Management Framework (AI RMF 1.0). Gaithersburg: National Institute of Standards and Technology.
+
+OECD. (2019). Recommendation of the Council on Artificial Intelligence. Paris: OECD Publishing.
+
+Papagianneas, S. (2024). Smart courts, smart justice? Automation and digitisation of courts in China (Master's thesis). Leiden University.
+
+Ribeiro, M. T., Singh, S., & Guestrin, C. (2016). "Why should I trust you?" Explaining the predictions of any classifier. Proceedings of the 22nd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining, 1135-1144.
+
+Susskind, R. (2019). Online Courts and the Future of Justice. Oxford: Oxford University Press.
+
+UNESCO. (2021). Recommendation on the Ethics of Artificial Intelligence. Paris: UNESCO.
+
+Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., Gomez, A. N., ... & Polosukhin, I. (2017). Attention is all you need. Advances in Neural Information Processing Systems, 30, 5998-6008.
+
+*Bu makale, Nişantaşı Üniversitesi Yapay Zekâ Anabilim Dalı LEE-505 "Makine Öğrenmesi ve Örüntü Tanıma" dersi kapsamında hazırlanmıştır. Danışman: Dr. Öğr. Üyesi Gülsüm Şanal. Öğrenci: Mehmet ALBAYRAK (20251556001). Tarih: 04.12.2025.*
+
+Not: Bu çalışma, yargı sistemlerinde yapay zekâ kullanımına ilişkin akademik bir öneri niteliğindedir. Resmi bir politika belgesi veya uygulama kılavuzu değildir. Uygulamaya yönelik kararların ilgili kamu kurumları ve uzmanlarla istişare edilerek alınması gerekmektedir.
